@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="./style.css" />
+	</head>
+	<body>
+		<nav class="tab-group">
+			<button onclick="k.setTab('passwords')" class="active passwords">Passwords <span id="passwords-notifier"></span></button>
+			<button onclick="k.setTab('notes')" class="notes">Notes <span id="notes-notifier"></span></button>
+			<button onclick="k.setTab('generate')" class="generate">Generate</button>
+			<button onclick="k.setTab('plugins');i.loadPluginStore();" class="plugins">Plugins</button>
+			<button onclick="k.setTab('settings')" class="settings">Settings</button>
+			<div class="slider"></div>
+		</nav>
+
+		<div class="modal create">
+			<div>
+				<p class="title">Set master password</p>
+				<input type="text" placeholder="Type password" onkeydown="if(event.key === 'Enter') { event.preventDefault(); i.setPassword(); }" />
+				<button class="primary" onclick="i.setPassword()">set password</button>
+				<div class="note primary">ⓘ Make sure to remember your master password or you may need to reset all of your data.</div>
+			</div>
+		</div>
+
+		<div class="modal login">
+			<div>
+				<p class="title">Enter master password</p>
+				<input type="text" placeholder="Type password" />
+				<button class="primary login no-gap">Login</button>
+				<div class="note danger" style="margin-top: 1rem; display: none">Password is incorrect!</div>
+			</div>
+		</div>
+
+		<div class="search">
+			<input type="text" placeholder="Search here..." onkeydown="if(event.key === 'Enter') { event.preventDefault(); k.search(); }" />
+
+			<div>
+				<p>0/0</p>
+				<div class="controls">
+					<button class="back">
+						<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M427-140.78v-475.13L215.43-404.35 140.78-480 480-819.22 819.22-480l-74.65 75.65L533-615.91v475.13H427Z" /></svg>
+					</button>
+					<button class="next">
+						<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M427-819.22v475.13L215.43-555.65 140.78-480 480-140.78 819.22-480l-74.65-75.65L533-344.09v-475.13H427Z" /></svg>
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<section class="tab passwords active" k-loginOnly></section>
+
+		<section class="tab notes" k-loginOnly>
+			<div contenteditable="true" placeholder="Type something to start taking notes..." class="notes-editor"></div>
+		</section>
+
+		<section class="tab generate">
+			<div class="subtab-group">
+				<button onclick="k.setSubtab('password')" class="password active">− Password −</button>
+				<button onclick="k.setSubtab('qr')" class="qr">− QR Code −</button>
+			</div>
+
+			<div class="subtab password active">
+				<input type="text" readonly placeholder="Your generated password will appear here..." class="output" />
+
+				<div class="button-group">
+					<button class="primary" onclick="i.generatePassword()">Generate</button>
+					<button class="outline" onclick="i.copyGeneratedPassword(this)">Copy</button>
+				</div>
+
+				<div class="options">
+					<div>
+						<p>Uppercase</p>
+						<div>
+							<div class="toggle">
+								<input type="checkbox" checked onchange="k.togglePasswordCharset('upper')" />
+								<label></label>
+							</div>
+						</div>
+					</div>
+					<div>
+						<p>Lowercase</p>
+						<div>
+							<div class="toggle">
+								<input type="checkbox" checked onchange="k.togglePasswordCharset('lower')" />
+								<label></label>
+							</div>
+						</div>
+					</div>
+					<div>
+						<p>Symbols</p>
+						<div>
+							<div class="toggle">
+								<input type="checkbox" checked onchange="k.togglePasswordCharset('symbol')" />
+								<label></label>
+							</div>
+						</div>
+					</div>
+					<div>
+						<p>Numbers</p>
+						<div>
+							<div class="toggle">
+								<input type="checkbox" checked onchange="k.togglePasswordCharset('number')" />
+								<label></label>
+							</div>
+						</div>
+					</div>
+					<div>
+						<p>Length</p>
+						<div>
+							<input type="text" value="12" placeholder="Password length" id="password-length" oninput="this.value = this.value.replace(/[^0-9]/g, '');" />
+						</div>
+					</div>
+					<div>
+						<p>Charset</p>
+						<div>
+							<input type="text" style="font-family: 'mono', monospace" placeholder="Characters used in password" id="password-charset" value="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?" />
+						</div>
+					</div>
+				</div>
+
+				<div class="note" style="margin-top: 1rem">Tip: Press space bar to generate rapidly!</div>
+			</div>
+
+			<div class="subtab qr">
+				<input type="text" value="https://github.com/Axorax?tab=repositories" placeholder="QR Code Content" id="qr-input" />
+
+				<div class="options">
+					<div>
+						<p>Width (in pixels)</p>
+						<div>
+							<input type="text" value="128" placeholder="QR Code width" id="qr-width" oninput="this.value = this.value.replace(/[^0-9]/g, '');" />
+						</div>
+					</div>
+					<div>
+						<p>Height (in pixels)</p>
+						<div>
+							<input type="text" value="128" placeholder="QR Code height" id="qr-height" oninput="this.value = this.value.replace(/[^0-9]/g, '');" />
+						</div>
+					</div>
+					<div>
+						<p>Foreground</p>
+						<div>
+							<input type="text" value="#ffffff" placeholder="QR Foreground Color" id="qr-fg" />
+						</div>
+					</div>
+					<div>
+						<p>Background</p>
+						<div>
+							<input type="text" value="#000000" placeholder="QR Background Color" id="qr-bg" />
+						</div>
+					</div>
+					<div>
+						<p>Preview Background</p>
+						<div>
+							<input type="text" value="#212121" placeholder="QR Preview Background Color" id="qr-preview" />
+						</div>
+					</div>
+				</div>
+
+				<button class="primary" onclick="k.generateQR()" style="width: 100%; margin-top: 1rem">Generate QR Code</button>
+
+				<div id="qr-box" style="display: none"></div>
+				<button style="margin-top: 1rem; width: 100%; display: none" class="primary" id="qr-btn">Download Image</button>
+				<div class="note" style="margin-top: 1rem">ⓘ If you can't scan the QR in the preview then change the preview background to red, blue, yellow or anything that contrasts highly from the QR code.</div>
+			</div>
+		</section>
+
+		<section class="tab plugins" style="padding: 1rem">
+			<div class="card-wrapper"></div>
+			<div class="note" style="margin-top: 1rem;">Make sure to reload the app after installing a plugin! (CTRL + R)</div>
+		</section>
+
+		<section class="tab settings">
+			<div class="subtab-group">
+				<button onclick="k.setSubtab('config')" class="config active">− Configurations −</button>
+				<button onclick="k.setSubtab('shortcuts')" class="shortcuts">− Shortcuts −</button>
+			</div>
+
+			<div class="subtab config active"></div>
+
+			<div class="subtab shortcuts"></div>
+		</section>
+
+		<script src="./dependencies.js"></script>
+		<script src="./api.js"></script>
+		<script src="./script.js"></script>
+	</body>
+</html>
