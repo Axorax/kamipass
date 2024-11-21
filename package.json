@@ -1,0 +1,14 @@
+{
+	"name": "kamipass",
+	"description": "Secure minimal password manager",
+	"private": true,
+	"version": "1.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "tauri dev",
+		"build": "tauri build"
+	},
+	"devDependencies": {
+		"@tauri-apps/cli": "^1"
+	}
+}
